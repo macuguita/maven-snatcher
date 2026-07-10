@@ -29,7 +29,7 @@ pub struct MigrateArgs {
 
 #[derive(ClapArgs, Debug)]
 pub struct CopyArgs {
-    /// Source maven base URL, e.g. https://maven.fabricmc.net/
+    /// Source maven base URL, e.g. <https://maven.fabricmc.net>
     #[arg(long)]
     pub source_url: String,
 

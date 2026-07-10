@@ -5,11 +5,11 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use walkdir::WalkDir;
 
-pub fn run(args: MigrateArgs) -> Result<()> {
+pub fn run(args: &MigrateArgs) -> Result<()> {
     let ctx = DestContext::new(
-        args.dest.url,
-        args.dest.username,
-        args.dest.password,
+        &args.dest.url,
+        &args.dest.username,
+        &args.dest.password,
         args.dest.dry_run,
     )?;
 
@@ -41,7 +41,7 @@ fn collect_files(root: &Path) -> Vec<PathBuf> {
         .into_iter()
         .filter_map(std::result::Result::ok)
         .filter(|entry| entry.file_type().is_file())
-        .map(|entry| entry.into_path())
+        .map(walkdir::DirEntry::into_path)
         .filter(|path| should_upload(path))
         .collect()
 }

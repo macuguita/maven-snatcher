@@ -14,10 +14,7 @@ impl Coordinate {
     fn parse(s: &str) -> Result<Self> {
         let parts: Vec<&str> = s.split(':').collect();
         if parts.len() < 3 {
-            bail!(
-                "invalid coordinate '{}', expected group:artifact:version",
-                s
-            );
+            bail!("invalid coordinate '{s}', expected group:artifact:version");
         }
         Ok(Self {
             group_id: parts[0].to_string(),
@@ -61,7 +58,7 @@ struct SourceContext {
     base_url: String,
 }
 
-pub fn run(args: CopyArgs) -> Result<()> {
+pub fn run(args: &CopyArgs) -> Result<()> {
     let coords: Vec<Coordinate> = args
         .coordinates
         .iter()
@@ -69,15 +66,13 @@ pub fn run(args: CopyArgs) -> Result<()> {
         .collect::<Result<_>>()?;
 
     let src = SourceContext {
-        client: Client::builder()
-            .user_agent("maven-worker-migrate")
-            .build()?,
+        client: Client::builder().user_agent("maven-snatcher").build()?,
         base_url: args.source_url.trim_end_matches('/').to_owned(),
     };
     let dst = DestContext::new(
-        args.dest.url,
-        args.dest.username,
-        args.dest.password,
+        &args.dest.url,
+        &args.dest.username,
+        &args.dest.password,
         args.dest.dry_run,
     )?;
 

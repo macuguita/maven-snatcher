@@ -13,14 +13,12 @@ pub struct DestContext {
 }
 
 impl DestContext {
-    pub fn new(url: String, username: String, password: String, dry_run: bool) -> Result<Self> {
+    pub fn new(url: &str, username: &str, password: &str, dry_run: bool) -> Result<Self> {
         Ok(Self {
-            client: Client::builder()
-                .user_agent("maven-worker-migrate")
-                .build()?,
-            base_url: url.trim_end_matches('/').to_owned(),
-            username,
-            password,
+            client: Client::builder().user_agent("maven-snatcher").build()?,
+            base_url: url.to_string().trim_end_matches('/').to_owned(),
+            username: username.to_string(),
+            password: password.to_string(),
             dry_run,
         })
     }
@@ -39,7 +37,7 @@ impl DestContext {
         let status = response.status();
         if !status.is_success() {
             let body = response.text().unwrap_or_default();
-            bail!("{} returned {}\n{}", relative_path, status, body);
+            bail!("{relative_path} returned {status}\n{body}");
         }
         Ok(())
     }
